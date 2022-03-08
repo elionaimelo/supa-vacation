@@ -1,9 +1,7 @@
 Build a FullStack App with Next.js, Supabase & Prisma | The Modern Dev by
 [AlterClass.io](https://alterclass.io).
 
-- Learn to build this application step-by-step by following the FREE course on
-  [The Modern Dev](https://themodern.dev/).
-
+Project made in the course [The Modern Dev](https://themodern.dev/).
 
 ## Getting Started
 
