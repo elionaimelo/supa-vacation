@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 
 
 export default NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
       server: {
@@ -22,7 +23,6 @@ export default NextAuth({
       from: process.env.EMAIL_FROM,
       maxAge: 10 * 60, // Magic links are valid for 10 min only
     }),
-  ],
-  adapter: PrismaAdapter(prisma),
+  ],  
   secret: process.env.SECRET,
 });
