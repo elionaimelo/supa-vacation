@@ -3,6 +3,10 @@ Build a FullStack App with Next.js, Supabase & Prisma | The Modern Dev by
 
 Project made in the course [The Modern Dev](https://themodern.dev/).
 
+
+![image info](./public/chrome-capture-2022-2-9.gif)
+
+
 ## Getting Started
 
 ### 1. Clone the repository and install dependencies
