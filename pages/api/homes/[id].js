@@ -1,9 +1,9 @@
 import { getSession } from "next-auth/react";
 import prisma from "@/lib/prisma";
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 
-const supabase = createClient(
+supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
