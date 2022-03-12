@@ -4,10 +4,10 @@ import Image from 'next/image';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/router';
 
-import { PrismaClient } from '@prisma/client';
+import prisma from 'lib/prisma';
 
 // Instantiate Prisma Client
-const prisma = new PrismaClient();
+;
 
 const ListedHome = (home = null) => {
   // Retrieve the Next.js router

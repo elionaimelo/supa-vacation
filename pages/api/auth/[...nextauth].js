@@ -4,13 +4,13 @@ import GoogleProvider from 'next-auth/providers/google';
 
 import nodemailer from 'nodemailer';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
+import prisma from 'lib/prisma';
 import Handlebars from 'handlebars';
 import { readFileSync } from 'fs';
 import path from 'path';
 
 // Instantiate Prisma Client
-const prisma = new PrismaClient();
+;
 
 const emailsDir = path.resolve(process.cwd(), 'emails');
 
