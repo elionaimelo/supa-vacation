@@ -1,11 +1,11 @@
-import { Fragment, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import Image from 'next/image';
-import PropTypes from 'prop-types';
-import AuthModal from './AuthModal';
-import { Menu, Transition } from '@headlessui/react';
+import { Fragment, useState } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import Image from "next/image";
+import PropTypes from "prop-types";
+import AuthModal from "./AuthModal";
+import { Menu, Transition } from "@headlessui/react";
 import {
   HeartIcon,
   HomeIcon,
@@ -13,30 +13,29 @@ import {
   PlusIcon,
   SparklesIcon,
   UserIcon,
-} from '@heroicons/react/outline';
-import { ChevronDownIcon } from '@heroicons/react/solid';
+} from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/solid";
 
-import { useSession, signOut } from 'next-auth/react';
-
+import { useSession, signOut } from "next-auth/react";
 
 const menuItems = [
   {
-    label: 'List a new home',
+    label: "List a new home",
     icon: PlusIcon,
-    href: '/list',
+    href: "/list",
   },
   {
-    label: 'My homes',
+    label: "My homes",
     icon: HomeIcon,
-    href: '/homes',
+    href: "/homes",
   },
   {
-    label: 'Favorites',
+    label: "Favorites",
     icon: HeartIcon,
-    href: '/favorites',
+    href: "/favorites",
   },
   {
-    label: 'Logout',
+    label: "Logout",
     icon: LogoutIcon,
     onClick: signOut,
   },
@@ -49,11 +48,10 @@ const Layout = ({ children = null }) => {
 
   const { data: session, status } = useSession();
   const user = session?.user;
-  const isLoadingUser = status === 'loading';
+  const isLoadingUser = status === "loading";
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
-  
 
   return (
     <>
@@ -79,11 +77,14 @@ const Layout = ({ children = null }) => {
                 </a>
               </Link>
               <div className="flex items-center space-x-4">
-                <Link href="/create">
-                  <a className="hidden px-3 py-1 transition rounded-md sm:block hover:bg-gray-200">
-                    List your home
-                  </a>
-                </Link>
+                <button
+                  onClick={() => {
+                    session?.user ? router.push("/create") : openModal();
+                  }}
+                  className="hidden px-3 py-1 transition rounded-md sm:block hover:bg-gray-200"
+                >
+                  List your home
+                </button>
                 {isLoadingUser ? (
                   <div className="h-8 w-[75px] bg-gray-200 animate-pulse rounded-md" />
                 ) : user ? (
@@ -93,7 +94,7 @@ const Layout = ({ children = null }) => {
                         {user?.image ? (
                           <Image
                             src={user?.image}
-                            alt={user?.name || 'Avatar'}
+                            alt={user?.name || "Avatar"}
                             layout="fill"
                           />
                         ) : (
@@ -117,7 +118,7 @@ const Layout = ({ children = null }) => {
                             {user?.image ? (
                               <Image
                                 src={user?.image}
-                                alt={user?.name || 'Avatar'}
+                                alt={user?.name || "Avatar"}
                                 layout="fill"
                               />
                             ) : (
@@ -180,7 +181,7 @@ const Layout = ({ children = null }) => {
 
         <main className="container flex-grow mx-auto">
           <div className="px-4 py-12">
-            {typeof children === 'function' ? children(openModal) : children}
+            {typeof children === "function" ? children(openModal) : children}
           </div>
         </main>
 
