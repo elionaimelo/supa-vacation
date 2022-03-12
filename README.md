@@ -9,6 +9,13 @@ Project made in the course [The Modern Dev](https://themodern.dev/).
 
 ## Getting Started
 
+## ⛏️ Built Using <a name = "built_using"></a>
+
+- [Supabase](https://supabase.com/) - Database
+- [Next.js](https://nextjs.org/) - Web Framework
+- [Prisma.js](https://www.prisma.io/) - ORM
+- [NextAuth](https://next-auth.js.org/) - Auth
+
 ### 1. Clone the repository and install dependencies
 
 ```
