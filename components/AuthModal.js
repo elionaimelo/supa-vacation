@@ -8,6 +8,7 @@ import { Formik, Form } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
 import { SparklesIcon, MailOpenIcon, XIcon } from '@heroicons/react/outline';
 import Input from './Input';
+import { signIn } from 'next-auth/react';
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -42,14 +43,14 @@ const Confirm = ({ show = false, email = '' }) => (
       >
         <div className="flex items-center justify-center h-full p-8">
           <div className="overflow-hidden transition-all transform">
-            <h3 className="text-center text-lg font-medium leading-6">
-              <div className="flex flex-col justify-center items-center space-y-4">
+            <h3 className="text-lg font-medium leading-6 text-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
                 <MailOpenIcon className="w-12 h-12 shrink-0 text-rose-500" />
               </div>
-              <p className="text-2xl font-semibold mt-2">Confirm your email</p>
+              <p className="mt-2 text-2xl font-semibold">Confirm your email</p>
             </h3>
 
-            <p className="text-lg text-center mt-4">
+            <p className="mt-4 text-lg text-center">
               We emailed a magic link to <strong>{email ?? ''}</strong>.
               <br />
               Check your inbox and click the link in the email to login or sign
@@ -68,11 +69,36 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
   const [showSignIn, setShowSignIn] = useState(false);
 
   const signInWithEmail = async ({ email }) => {
-    // TODO: Perform email auth
+    let toastId;
+    try {
+      toastId = toast.loading('Loading...');
+      setDisabled(true);
+      // Perform sign in
+      const { error } = await signIn('email', {
+        redirect: false,
+        callbackUrl: window.location.href,
+        email,
+      });
+      // Something went wrong
+      if (error) {
+        throw new Error(error);
+      }
+      setConfirm(true);
+      toast.dismiss(toastId);
+    } catch (err) {
+      toast.error('Unable to sign in', { id: toastId });
+    } finally {
+      setDisabled(false);
+    }
   };
 
   const signInWithGoogle = () => {
-    // TODO: Perform Google auth
+    toast.loading('Redirecting...');
+    setDisabled(true);
+    // Perform sign in
+    signIn('google', {
+      callbackUrl: window.location.href,
+    });
   };
 
   const closeModal = () => {
@@ -137,11 +163,11 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl sm:rounded-md max-w-md relative">
+            <div className="relative inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl sm:rounded-md">
               {/* Close icon */}
               <button
                 onClick={closeModal}
-                className="absolute top-2 right-2 shrink-0 p-1 rounded-md hover:bg-gray-100 transition focus:outline-none"
+                className="absolute p-1 transition rounded-md top-2 right-2 shrink-0 hover:bg-gray-100 focus:outline-none"
               >
                 <XIcon className="w-5 h-5" />
               </button>
@@ -151,7 +177,7 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                   <div className="flex justify-center">
                     <Link href="/">
                       <a className="flex items-center space-x-1">
-                        <SparklesIcon className="shrink-0 w-8 h-8 text-rose-500" />
+                        <SparklesIcon className="w-8 h-8 shrink-0 text-rose-500" />
                         <span className="text-xl font-semibold tracking-wide">
                           Supa<span className="text-rose-500">Vacation</span>
                         </span>
@@ -161,13 +187,13 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
 
                   <Dialog.Title
                     as="h3"
-                    className="mt-6 font-bold text-lg sm:text-2xl text-center"
+                    className="mt-6 text-lg font-bold text-center sm:text-2xl"
                   >
                     {showSignIn ? 'Welcome back!' : 'Create your account'}
                   </Dialog.Title>
 
                   {!showSignIn ? (
-                    <Dialog.Description className="mt-2 text-gray-500 text-base text-center">
+                    <Dialog.Description className="mt-2 text-base text-center text-gray-500">
                       Please create an account to list your homes and bookmark
                       your favorite ones.
                     </Dialog.Description>
@@ -209,14 +235,14 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                           <button
                             type="submit"
                             disabled={disabled || !isValid}
-                            className="mt-6 w-full bg-rose-600 text-white py-2 px-8 rounded-md focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
+                            className="w-full px-8 py-2 mt-6 text-white transition rounded-md bg-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
                           >
                             {isSubmitting
                               ? 'Loading...'
                               : `Sign ${showSignIn ? 'in' : 'up'}`}
                           </button>
 
-                          <p className="mt-2 text-center text-sm text-gray-500">
+                          <p className="mt-2 text-sm text-center text-gray-500">
                             {showSignIn ? (
                               <>
                                 Don&apos;t have an account yet?{' '}
@@ -227,7 +253,7 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                                     setShowSignIn(false);
                                     resetForm();
                                   }}
-                                  className="underline underline-offset-1 font-semibold text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   Sign up
                                 </button>
@@ -243,7 +269,7 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                                     setShowSignIn(true);
                                     resetForm();
                                   }}
-                                  className="underline underline-offset-1 font-semibold text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   Log in
                                 </button>

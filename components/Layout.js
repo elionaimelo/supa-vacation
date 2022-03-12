@@ -16,6 +16,9 @@ import {
 } from '@heroicons/react/outline';
 import { ChevronDownIcon } from '@heroicons/react/solid';
 
+import { useSession, signOut } from 'next-auth/react';
+
+
 const menuItems = [
   {
     label: 'List a new home',
@@ -35,7 +38,7 @@ const menuItems = [
   {
     label: 'Logout',
     icon: LogoutIcon,
-    onClick: () => null,
+    onClick: signOut,
   },
 ];
 
@@ -44,11 +47,13 @@ const Layout = ({ children = null }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const user = null;
-  const isLoadingUser = false;
+  const { data: session, status } = useSession();
+  const user = session?.user;
+  const isLoadingUser = status === 'loading';
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+  
 
   return (
     <>
@@ -61,13 +66,13 @@ const Layout = ({ children = null }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen flex flex-col">
-        <header className="h-16 w-full shadow-md">
-          <div className="h-full container mx-auto">
-            <div className="h-full px-4 flex justify-between items-center space-x-4">
+      <div className="flex flex-col min-h-screen">
+        <header className="w-full h-16 shadow-md">
+          <div className="container h-full mx-auto">
+            <div className="flex items-center justify-between h-full px-4 space-x-4">
               <Link href="/">
                 <a className="flex items-center space-x-1">
-                  <SparklesIcon className="shrink-0 w-8 h-8 text-rose-500" />
+                  <SparklesIcon className="w-8 h-8 shrink-0 text-rose-500" />
                   <span className="text-xl font-semibold tracking-wide">
                     Supa<span className="text-rose-600">Vacation</span>
                   </span>
@@ -75,7 +80,7 @@ const Layout = ({ children = null }) => {
               </Link>
               <div className="flex items-center space-x-4">
                 <Link href="/create">
-                  <a className="hidden sm:block hover:bg-gray-200 transition px-3 py-1 rounded-md">
+                  <a className="hidden px-3 py-1 transition rounded-md sm:block hover:bg-gray-200">
                     List your home
                   </a>
                 </Link>
@@ -84,7 +89,7 @@ const Layout = ({ children = null }) => {
                 ) : user ? (
                   <Menu as="div" className="relative z-50">
                     <Menu.Button className="flex items-center space-x-px group">
-                      <div className="shrink-0 flex items-center justify-center rounded-full overflow-hidden relative bg-gray-200 w-9 h-9">
+                      <div className="relative flex items-center justify-center overflow-hidden bg-gray-200 rounded-full shrink-0 w-9 h-9">
                         {user?.image ? (
                           <Image
                             src={user?.image}
@@ -92,10 +97,10 @@ const Layout = ({ children = null }) => {
                             layout="fill"
                           />
                         ) : (
-                          <UserIcon className="text-gray-400 w-6 h-6" />
+                          <UserIcon className="w-6 h-6 text-gray-400" />
                         )}
                       </div>
-                      <ChevronDownIcon className="w-5 h-5 shrink-0 text-gray-500 group-hover:text-current" />
+                      <ChevronDownIcon className="w-5 h-5 text-gray-500 shrink-0 group-hover:text-current" />
                     </Menu.Button>
                     <Transition
                       as={Fragment}
@@ -106,9 +111,9 @@ const Layout = ({ children = null }) => {
                       leaveFrom="opacity-100 scale-100"
                       leaveTo="opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 w-72 overflow-hidden mt-1 divide-y divide-gray-100 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="flex items-center space-x-2 py-4 px-4 mb-2">
-                          <div className="shrink-0 flex items-center justify-center rounded-full overflow-hidden relative bg-gray-200 w-9 h-9">
+                      <Menu.Items className="absolute right-0 mt-1 overflow-hidden origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-72 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="flex items-center px-4 py-4 mb-2 space-x-2">
+                          <div className="relative flex items-center justify-center overflow-hidden bg-gray-200 rounded-full shrink-0 w-9 h-9">
                             {user?.image ? (
                               <Image
                                 src={user?.image}
@@ -116,7 +121,7 @@ const Layout = ({ children = null }) => {
                                 layout="fill"
                               />
                             ) : (
-                              <UserIcon className="text-gray-400 w-6 h-6" />
+                              <UserIcon className="w-6 h-6 text-gray-400" />
                             )}
                           </div>
                           <div className="flex flex-col truncate">
@@ -137,17 +142,17 @@ const Layout = ({ children = null }) => {
                                 <Menu.Item>
                                   {href ? (
                                     <Link href={href}>
-                                      <a className="flex items-center space-x-2 py-2 px-4 rounded-md hover:bg-gray-100">
-                                        <Icon className="w-5 h-5 shrink-0 text-gray-500" />
+                                      <a className="flex items-center px-4 py-2 space-x-2 rounded-md hover:bg-gray-100">
+                                        <Icon className="w-5 h-5 text-gray-500 shrink-0" />
                                         <span>{label}</span>
                                       </a>
                                     </Link>
                                   ) : (
                                     <button
-                                      className="w-full flex items-center space-x-2 py-2 px-4 rounded-md hover:bg-gray-100"
+                                      className="flex items-center w-full px-4 py-2 space-x-2 rounded-md hover:bg-gray-100"
                                       onClick={onClick}
                                     >
-                                      <Icon className="w-5 h-5 shrink-0 text-gray-500" />
+                                      <Icon className="w-5 h-5 text-gray-500 shrink-0" />
                                       <span>{label}</span>
                                     </button>
                                   )}
@@ -163,7 +168,7 @@ const Layout = ({ children = null }) => {
                   <button
                     type="button"
                     onClick={openModal}
-                    className="ml-4 px-4 py-1 rounded-md bg-rose-600 hover:bg-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-500 focus:ring-opacity-50 text-white transition"
+                    className="px-4 py-1 ml-4 text-white transition rounded-md bg-rose-600 hover:bg-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-500 focus:ring-opacity-50"
                   >
                     Log in
                   </button>
@@ -173,7 +178,7 @@ const Layout = ({ children = null }) => {
           </div>
         </header>
 
-        <main className="flex-grow container mx-auto">
+        <main className="container flex-grow mx-auto">
           <div className="px-4 py-12">
             {typeof children === 'function' ? children(openModal) : children}
           </div>
